@@ -14,7 +14,7 @@ int print_char(va_list args)
 
 	if (c)
 	{
-		count = write(1, &c, 1);
+		count = _putchar(c);
 		return (count);
 	}
 	return (0);
@@ -36,7 +36,7 @@ int print_string(va_list args)
 		return (-1);
 	for (i = 0; str[i]; i++)
 	{
-		count = write(1, &str[i], 1);
+		count = _putchar(str[i]);
 	}
 
 	return (count);
@@ -54,7 +54,7 @@ int print_percent(va_list args)
 	int count;
 	(void)args;
 
-	count = write(1, "%", 1);
+	count = _putchar('%');
 
 	return (count);
 }
@@ -91,7 +91,7 @@ int print_int(va_list args)
 	for (j = i; j >= 0; j--)
 	{
 		x[0] = ('0' + numb_array[j]); /*Convert int to char*/
-		count += write(1, x, 1);
+		count += _putchar(x[0]);
 	}
 
 	return (count);
@@ -129,7 +129,7 @@ int print_decimal(va_list args)
 	for (j = i; j >= 0; j--)
 	{
 		x[0] = ('0' + numb_array[j]); /*Convert int to char*/
-		count += write(1, &x, 1);
+		count += _putchar(x[0]);
 	}
 
 	return (count);

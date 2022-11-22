@@ -18,6 +18,7 @@ typedef struct spec
 	int (*spec_func)(va_list);
 } spec_t;
 
+int _putchar(char c);
 int _printf(const char *format, ...);
 int (*check_specifier(const char *))(va_list);
 int print_char(va_list args);

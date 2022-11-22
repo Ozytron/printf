@@ -15,9 +15,9 @@ int _printf(const char *format, ...)
 	int char_index = 0, char_count = 0;
 	int wrv = 0; /* return value from write()*/
 	va_list args;
+	int (*spec_func)(va_list);
 
 	va_start(args, format);
-	int (*spec_func)(va_list);
 
 	if (format == NULL)/* prevents parsing a null pointer */
 		return (-1);

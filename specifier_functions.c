@@ -30,7 +30,7 @@ int print_char(va_list args)
 int print_string(va_list args)
 {
 	char *str = va_arg(args, char*);
-	int length = 0, i, count = 0;
+	int i, count = 0;
 
 	if (str == NULL)
 		return (-1);
@@ -51,8 +51,8 @@ int print_string(va_list args)
 
 int print_percent(va_list args)
 {
-	(void)args;
 	int count;
+	(void)args;
 
 	count = write(1, "%", 1);
 
@@ -68,7 +68,7 @@ int print_percent(va_list args)
 
 int print_int(va_list args)
 {
-	int i = 0;
+	int i = 0, j;
 	int count = 0;
 	int numb;
 	int numb_array[10];
@@ -88,9 +88,9 @@ int print_int(va_list args)
 	}
 
 	/*Write the contents of the array to stdout*/
-	for (i; i >= 0; i--)
+	for (j = i; j >= 0; j--)
 	{
-		x[0] = ('0' + numb_array[i]); /*Convert int to char*/
+		x[0] = ('0' + numb_array[j]); /*Convert int to char*/
 		count += write(1, x, 1);
 	}
 
@@ -106,7 +106,7 @@ int print_int(va_list args)
 
 int print_decimal(va_list args)
 {
-	int i = 0;
+	int i = 0, j;
 	int count = 0;
 	int numb;
 	int numb_array[10];
@@ -126,10 +126,10 @@ int print_decimal(va_list args)
 	}
 
 	/*Write the contents of the array to stdout*/
-	for (i; i >= 0; i--)
+	for (j = i; j >= 0; j--)
 	{
-		x[0] = ('0' + numb_array[i]); /*Convert int to char*/
-		count += write(1, x, 1);
+		x[0] = ('0' + numb_array[j]); /*Convert int to char*/
+		count += write(1, &x, 1);
 	}
 
 	return (count);

@@ -1,136 +1,190 @@
 #include "main.h"
 
+/************************* PRINT CHAR *************************/
+
 /**
-  * print_char - prints a charcter to stdout.
-  * @args: variadic parameters - not specifies yet.
-  *
-  * Return: number of characters printed.
-  */
-
-int print_char(va_list args)
+ * print_char - Prints a char
+ * @types: List a of arguments
+ * @buffer: Buffer array to handle print
+ * @flags:  Calculates active flags
+ * @width: Width
+ * @precision: Precision specification
+ * @size: Size specifier
+ * Return: Number of chars printed
+ */
+int print_char(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
 {
-	char c = (char)va_arg(args, int);
-	int count;
+	char c = va_arg(types, int);
 
-	if (c)
-	{
-		count = _putchar(c);
-		return (count);
-	}
-	return (0);
+	return (handle_write_char(c, buffer, flags, width, precision, size));
 }
-
+/************************* PRINT A STRING *************************/
 /**
-  * print_string - prints a string to stdout
-  * @args: variadic parameters - not specifies yet
-  *
-  * Return: number of characters printed.
-  */
+ * print_string - Prints a string
+ * @types: List a of arguments
+ * @buffer: Buffer array to handle print
+ * @flags:  Calculates active flags
+ * @width: get width.
+ * @precision: Precision specification
+ * @size: Size specifier
+ * Return: Number of chars printed
+ */
 
-int print_string(va_list args)
+int print_string(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
 {
-	char *str = va_arg(args, char*);
-	int i, count = 0;
+	int length = 0, i;
+	char *str = va_arg(types, char *);
 
+	UNUSED(buffer);
+	UNUSED(flags);
+	UNUSED(width);
+	UNUSED(precision);
+	UNUSED(size);
 	if (str == NULL)
-		return (-1);
-	for (i = 0; str[i]; i++)
 	{
-		count = _putchar(str[i]);
+		str = "(null)";
+		if (precision >= 6)
+			str = "      ";
 	}
 
-	return (count);
+	while (str[length] != '\0')
+		length++;
+
+	if (precision >= 0 && precision < length)
+		length = precision;
+
+	if (width > length)
+	{
+		if (flags & F_MINUS)
+		{
+			write(1, &str[0], length);
+			for (i = width - length; i > 0; i--)
+				write(1, " ", 1);
+			return (width);
+		}
+		else
+		{
+			for (i = width - length; i > 0; i--)
+				write(1, " ", 1);
+			write(1, &str[0], length);
+			return (width);
+		}
+	}
+
+	return (write(1, str, length));
 }
 
+/************************* PRINT PERCENT SIGN *************************/
 /**
-  * print_percent - prints a percent sign to stdout
-  * @args: variadic parameters - not specifies yet.
-  *
-  * Return: number of characters printed.
-  */
-
-int print_percent(va_list args)
+ * print_percent - Prints a percent sign
+ * @types: Lista of arguments
+ * @buffer: Buffer array to handle print
+ * @flags:  Calculates active flags
+ * @width: get width.
+ * @precision: Precision specification
+ * @size: Size specifier
+ * Return: Number of chars printed
+ */
+int print_percent(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
 {
+	UNUSED(types);
+	UNUSED(buffer);
+	UNUSED(flags);
+	UNUSED(width);
+	UNUSED(precision);
+	UNUSED(size);
+	return (write(1, "%%", 1));
+}
+
+/************************* PRINT INT *************************/
+/**
+ * print_int - Print int
+ * @types: Lista of arguments
+ * @buffer: Buffer array to handle print
+ * @flags:  Calculates active flags
+ * @width: get width.
+ * @precision: Precision specification
+ * @size: Size specifier
+ * Return: Number of chars printed
+ */
+int print_int(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
+{
+	int i = BUFF_SIZE - 2;
+	int is_negative = 0;
+	long int n = va_arg(types, long int);
+	unsigned long int num;
+
+	n = convert_size_number(n, size);
+
+	if (n == 0)
+		buffer[i--] = '0';
+
+	buffer[BUFF_SIZE - 1] = '\0';
+	num = (unsigned long int)n;
+
+	if (n < 0)
+	{
+		num = (unsigned long int)((-1) * n);
+		is_negative = 1;
+	}
+
+	while (num > 0)
+	{
+		buffer[i--] = (num % 10) + '0';
+		num /= 10;
+	}
+
+	i++;
+
+	return (write_number(is_negative, i, buffer, flags, width, precision, size));
+}
+
+/************************* PRINT BINARY *************************/
+/**
+ * print_binary - Prints an unsigned number
+ * @types: Lista of arguments
+ * @buffer: Buffer array to handle print
+ * @flags:  Calculates active flags
+ * @width: get width.
+ * @precision: Precision specification
+ * @size: Size specifier
+ * Return: Numbers of char printed.
+ */
+int print_binary(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
+{
+	unsigned int n, m, i, sum;
+	unsigned int a[32];
 	int count;
-	(void)args;
 
-	count = _putchar('%');
+	UNUSED(buffer);
+	UNUSED(flags);
+	UNUSED(width);
+	UNUSED(precision);
+	UNUSED(size);
 
-	return (count);
-}
-
-/**
-  * print_int - prints a integer to stdout
-  * @args: variadic parameters - not specifies yet.
-  *
-  * Return: number of characters printed.
-  */
-
-int print_int(va_list args)
-{
-	int i = 0, j;
-	int count = 0;
-	int numb;
-	int numb_array[10];
-	char x[1];
-
-	/*Fetch integer from variadic parameters*/
-	numb = va_arg(args, int);
-
-	/*Break the numbers apart and assign them to array*/
-	while (numb != 0)
+	n = va_arg(types, unsigned int);
+	m = 2147483648; /* (2 ^ 31) */
+	a[0] = n / m;
+	for (i = 1; i < 32; i++)
 	{
-		numb_array[i] = (numb % 10);
-		numb = numb / 10;
-		if (numb == 0)
-			break;
-		i++;
+		m /= 2;
+		a[i] = (n / m) % 2;
 	}
-
-	/*Write the contents of the array to stdout*/
-	for (j = i; j >= 0; j--)
+	for (i = 0, sum = 0, count = 0; i < 32; i++)
 	{
-		x[0] = ('0' + numb_array[j]); /*Convert int to char*/
-		count += _putchar(x[0]);
+		sum += a[i];
+		if (sum || i == 31)
+		{
+			char z = '0' + a[i];
+
+			write(1, &z, 1);
+			count++;
+		}
 	}
-
-	return (count);
-}
-
-/**
-  * print_decimal - prints a given integer from variadic parameters to base 10
-  * @args: variadic parameters
-  *
-  * Return: number of characters printed.
-  */
-
-int print_decimal(va_list args)
-{
-	int i = 0, j;
-	int count = 0;
-	int numb;
-	int numb_array[10];
-	char x[1];
-
-	/*Fetch integer from variadic parameters*/
-	numb = va_arg(args, int);
-
-	/*Break the numbers apart and assign them to array*/
-	while (numb != 0)
-	{
-		numb_array[i] = (numb % 10);
-		numb = numb / 10;
-		if (numb == 0)
-			break;
-		i++;
-	}
-
-	/*Write the contents of the array to stdout*/
-	for (j = i; j >= 0; j--)
-	{
-		x[0] = ('0' + numb_array[j]); /*Convert int to char*/
-		count += _putchar(x[0]);
-	}
-
 	return (count);
 }

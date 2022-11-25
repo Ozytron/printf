@@ -1,9 +1,10 @@
 #include "main.h"
 
-/**print_specifier - Prints an argument based on its type
+/**
+ * print_specifier - Prints an argument based on its type
  * @format: Formatted string in which to print the arguments.
  * @list: List of arguments to be printed.
- * @ind: ind.
+ * @index: index.
  * @buffer: Buffer array to handle print.
  * @flags: Calculates active flags
  * @width: get width.
@@ -12,8 +13,8 @@
  * Return: 1 or 2;
  */
 
-int print_specifier(const char *format, int *index, va_list list, char buffer[],
-	int flags, int width, int precision, int size)
+int print_specifier(const char *format, int *index, va_list list,
+	char buffer[], int flags, int width, int precision, int size)
 {
 	int i, unknown_count = 0, counts = -1;
 	fmt_t fmt_types[] = {

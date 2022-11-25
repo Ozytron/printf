@@ -39,6 +39,7 @@ struct format
  */
 typedef struct format fmt_t;
 
+int _putchar(char c);
 int _printf(const char *format, ...);
 int print_specifier(const char *format, int *i,
 va_list list, char buffer[], int flags, int width, int precision, int size);
